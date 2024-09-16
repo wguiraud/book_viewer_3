@@ -20,6 +20,34 @@ helpers do
   end
 end
 
+#helper methods
+def each_chapter
+  @chapters_list.each_with_index do |name, index|
+    number = index + 1
+    contents = File.read("data/chp#{number}.txt")
+    yield number, name, contents
+  end
+end
+
+def chapters_matching_query(query)
+  results = []
+
+  return results unless query
+
+  each_chapter do |number, name, contents|
+    matches = {}
+
+    contents.split("\n\n").each_with_index do |paragraph, index|
+      matches[index] = paragraph if paragraph.include?(query)
+    end
+
+    results << { number:, name:, paragraphs: matches } if matches.any?
+  end
+
+  results
+end
+
+
 get '/' do
   erb :home
 end
@@ -31,42 +59,6 @@ get '/chapters/:num' do
 
   @chapter_content = File.read("./data/chp#{@chapter_number}.txt")
   erb :chapter
-end
-
-def each_chapter
-  @chapters_list.each_with_index do |name, index|
-    number = index + 1
-    contents = File.read("data/chp#{number}.txt")
-    yield number, name, contents
-  end
-end
-
-def chapters_matching_query(query)
-  # first implemetation
-  #  result = []
-  #  return result if !query || query.empty?
-  #  each_chapter do |name, number, contents|
-  #    result << {name: name, number: number} if contents.include?(query)
-  #  end
-  #  result
-
-  # second implementation
-  results = []
-
-  return results unless query
-
-  each_chapter do |number, name, contents|
-    matches = {}
-
-    contents.split("\n\n").each_with_index do |paragraph, index|
-      # this is a hash with an index as a key and the paragraph content as value
-      matches[index] = paragraph if paragraph.include?(query)
-    end
-
-    results << { number:, name:, paragraphs: matches } if matches.any?
-  end
-
-  results
 end
 
 get '/search' do
