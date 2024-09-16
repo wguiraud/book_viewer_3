@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sinatra/reloader'
+require 'sinatra/reloader' if development?
 require 'sinatra'
 
 before do
