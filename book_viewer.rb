@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'sinatra/reloader' if development?
 require 'sinatra'
+require 'sinatra/reloader' if development?
 
 before do
   @chapters_list = File.readlines('data/toc.txt')
